@@ -1,0 +1,171 @@
+﻿<Page x:Class="SistemaInventario.Views.InventarioPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{StaticResource BgAppBrush}"
+      Title="InventarioPage">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border Style="{StaticResource SoftCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition Width="220"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="Gestión de inventario"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="Consulta stock, filtra productos y ajusta inventario manualmente."
+                                   Margin="0,6,0,0"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+
+                    <TextBox x:Name="TxtBuscar"
+                             Grid.Column="1"
+                             Height="36"
+                             Margin="10,0"
+                             VerticalAlignment="Center"
+                             TextChanged="TxtBuscar_TextChanged"/>
+
+                    <ComboBox x:Name="CbCategoriaFiltro"
+                              Grid.Column="2"
+                              Height="36"
+                              Margin="10,0"
+                              VerticalAlignment="Center"
+                              DisplayMemberPath="Nombre"
+                              SelectedValuePath="Id"
+                              SelectionChanged="CbCategoriaFiltro_SelectionChanged"/>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="18"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0"
+                        Style="{StaticResource SoftCardStyle}">
+                    <DataGrid x:Name="DgInventario"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              SelectionChanged="DgInventario_SelectionChanged"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              RowBackground="White"
+                              AlternatingRowBackground="#F2F7F7"
+                              BorderThickness="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="70"/>
+                            <DataGridTextColumn Header="Producto" Binding="{Binding Nombre}" Width="*"/>
+                            <DataGridTextColumn Header="Categoría" Binding="{Binding Categoria.Nombre}" Width="150"/>
+                            <DataGridTextColumn Header="Precio Venta" Binding="{Binding PrecioVenta}" Width="120"/>
+                            <DataGridTextColumn Header="Stock" Binding="{Binding Stock}" Width="90"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+
+                <Border Grid.Column="2"
+                        Style="{StaticResource SoftCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Ajuste de stock"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+
+                        <TextBlock Text="Producto seleccionado"
+                                   Margin="0,14,0,4"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBox x:Name="TxtProductoSeleccionado"
+                                 Height="36"
+                                 IsReadOnly="True"/>
+
+                        <TextBlock Text="Stock actual"
+                                   Margin="0,14,0,4"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBox x:Name="TxtStockActual"
+                                 Height="36"
+                                 IsReadOnly="True"/>
+
+                        <TextBlock Text="Cantidad"
+                                   Margin="0,14,0,4"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBox x:Name="TxtCantidadAjuste"
+                                 Height="36"/>
+
+                        <Button Content="Entrada de stock"
+                                Margin="0,18,0,0"
+                                Height="40"
+                                Click="BtnEntrada_Click"/>
+
+                        <Button Content="Salida de stock"
+                                Margin="0,10,0,0"
+                                Height="40"
+                                Background="#FBE4D8"
+                                Foreground="#8A3B12"
+                                BorderThickness="0"
+                                Click="BtnSalida_Click"/>
+
+                        <Button Content="Limpiar"
+                                Margin="0,10,0,0"
+                                Height="40"
+                                Background="#FFF7ED"
+                                Foreground="#6B4E2E"
+                                BorderThickness="0"
+                                Click="BtnLimpiar_Click"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <UniformGrid Grid.Row="4" Columns="3">
+                <Border Margin="8" Style="{StaticResource SoftCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Total productos"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBlock x:Name="TxtResumenProductos"
+                                   FontSize="26"
+                                   FontWeight="Bold"
+                                   Text="0"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Margin="8" Style="{StaticResource SoftCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Stock bajo"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBlock x:Name="TxtResumenStockBajo"
+                                   FontSize="26"
+                                   FontWeight="Bold"
+                                   Text="0"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Margin="8" Style="{StaticResource SoftCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Categorías"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBlock x:Name="TxtResumenCategorias"
+                                   FontSize="26"
+                                   FontWeight="Bold"
+                                   Text="0"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </Grid>
+    </ScrollViewer>
+</Page>

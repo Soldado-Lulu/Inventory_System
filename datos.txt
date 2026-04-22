@@ -1,0 +1,4 @@
+sistema actual -> sistema sencillo de inventario , ventas , reportes, fininzas
+
+
+Sistema que vamos a desarrollar sistema con qr, por producto para ventas masivas 

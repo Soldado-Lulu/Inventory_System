@@ -1,0 +1,203 @@
+﻿<Page x:Class="SistemaInventario.Views.DashboardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Background="{StaticResource BgAppBrush}"
+      Title="DashboardPage">
+
+    <Page.Resources>
+        <Style x:Key="CardButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="165"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="ShadowLayer"
+                                    Background="#7FA0A3"
+                                    CornerRadius="24"
+                                    Margin="0,0,0,8"/>
+
+                            <Border x:Name="MainCard"
+                                    Background="{TemplateBinding Tag}"
+                                    CornerRadius="24"
+                                    Padding="22">
+                                <ContentPresenter/>
+                            </Border>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ShadowLayer" Property="Margin" Value="0,0,0,4"/>
+                                <Setter TargetName="MainCard" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="-4"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ShadowLayer" Property="Margin" Value="0,0,0,2"/>
+                                <Setter TargetName="MainCard" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="-1"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <TextBlock Text="Dashboard administrativo"
+                           FontSize="26"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                <TextBlock Text="Accesos rápidos para gestionar ventas, productos y reportes."
+                           Margin="0,6,0,0"
+                           FontSize="14"
+                           Foreground="{StaticResource TextSecondaryBrush}"/>
+            </StackPanel>
+
+            <UniformGrid Grid.Row="2" Columns="4">
+
+                <Button Style="{StaticResource CardButtonStyle}"
+                        Tag="{StaticResource CardSellBrush}"
+                        Click="BtnVender_Click">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="💰"
+                                   FontSize="38"
+                                   Margin="0,0,0,12"/>
+                        <TextBlock Text="Vender"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#111111"/>
+                        <TextBlock Text="Registrar ventas rápidas"
+                                   Margin="0,8,0,0"
+                                   FontSize="14"
+                                   Foreground="#21343A"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource CardButtonStyle}"
+                        Tag="{StaticResource CardProductsBrush}"
+                        Click="BtnProductos_Click">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="📦"
+                                   FontSize="38"
+                                   Margin="0,0,0,12"/>
+                        <TextBlock Text="Productos"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#111111"/>
+                        <TextBlock Text="Crear y administrar productos"
+                                   Margin="0,8,0,0"
+                                   FontSize="14"
+                                   Foreground="#3B2C1D"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource CardButtonStyle}"
+                        Tag="{StaticResource CardInventoryBrush}"
+                        Click="BtnInventario_Click">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="📊"
+                                   FontSize="38"
+                                   Margin="0,0,0,12"/>
+                        <TextBlock Text="Inventario"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#111111"/>
+                        <TextBlock Text="Control de stock"
+                                   Margin="0,8,0,0"
+                                   FontSize="14"
+                                   Foreground="#233B22"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource CardButtonStyle}"
+                        Tag="{StaticResource CardReportsBrush}"
+                        Click="BtnReportes_Click">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="📈"
+                                   FontSize="38"
+                                   Margin="0,0,0,12"/>
+                        <TextBlock Text="Reportes"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#111111"/>
+                        <TextBlock Text="Indicadores y resultados"
+                                   Margin="0,8,0,0"
+                                   FontSize="14"
+                                   Foreground="#243746"/>
+                    </StackPanel>
+                </Button>
+            </UniformGrid>
+
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.4*"/>
+                    <ColumnDefinition Width="18"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0"
+                        Style="{StaticResource SoftCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Espacio estratégico"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextAccentBrush}"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="Próximos widgets"
+                                   Margin="0,10,0,6"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="Aquí puedes mostrar después ventas del día, productos con stock bajo, últimas ventas o alertas importantes del sistema."
+                                   TextWrapping="Wrap"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2"
+                        Style="{StaticResource SoftCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Idea visual"
+                                   FontSize="14"
+                                   Foreground="#B27D47"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="Diseño modular"
+                                   Margin="0,10,0,6"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#5E432A"/>
+                        <TextBlock Text="Cada tarjeta funciona como acceso directo para que el usuario navegue más rápido por el sistema."
+                                   TextWrapping="Wrap"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</Page>
