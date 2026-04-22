@@ -48,7 +48,23 @@ namespace SistemaInventario.Data
                 .WithMany(c => c.Productos)
                 .HasForeignKey(p => p.CategoriaId)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto>()
+                .HasIndex(p => p.Codigo)
+                .IsUnique();
+            modelBuilder.Entity<Producto>()
+                .HasIndex(p => p.CodigoQr)
+                .IsUnique();
 
+            modelBuilder.Entity<Producto>()
+                .Property(p => p.Codigo)
+                .IsRequired();
+
+            modelBuilder.Entity<Producto>()
+                .Property(p => p.CodigoQr)
+                .IsRequired();
+            modelBuilder.Entity<Producto>()
+    .Property(p => p.UsaQr)
+    .HasDefaultValue(true);
             modelBuilder.Entity<Venta>()
                 .Property(v => v.Total)
                 .HasPrecision(18, 2);

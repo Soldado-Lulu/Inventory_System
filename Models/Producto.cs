@@ -24,5 +24,8 @@ namespace SistemaInventario.Models
         public int CategoriaId { get; set; }
 
         public Categoria? Categoria { get; set; }
+        public string Codigo { get; set; } = string.Empty;
+        public string CodigoQr { get; set; } = string.Empty;
+        public bool UsaQr { get; set; } = true;
     }
 }

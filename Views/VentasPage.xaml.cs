@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using SistemaInventario.Models;
 using SistemaInventario.Services;
-using System.Globalization;
 
 namespace SistemaInventario.Views
 {
@@ -32,6 +24,12 @@ namespace SistemaInventario.Views
             CargarProductos();
             ActualizarGrid();
             LimpiarFormularioProducto();
+            Loaded += VentasPage_Loaded;
+        }
+
+        private void VentasPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            TxtEscaneo.Focus();
         }
 
         private void CargarProductos()
@@ -45,13 +43,16 @@ namespace SistemaInventario.Views
             CbProductos.ItemsSource = _productos;
         }
 
-        private void LimpiarFormularioProducto()
+        private void LimpiarFormularioProducto(bool limpiarBusqueda = false)
         {
             CbProductos.SelectedItem = null;
             TxtCantidad.Text = string.Empty;
             TxtPrecioUnitario.Text = string.Empty;
             TxtStockDisponible.Text = string.Empty;
             TxtSubtotal.Text = string.Empty;
+
+            if (limpiarBusqueda)
+                TxtEscaneo.Text = string.Empty;
         }
 
         private void ActualizarInfoProducto()
@@ -105,7 +106,7 @@ namespace SistemaInventario.Views
         {
             if (CbProductos.SelectedItem is not Producto producto)
             {
-                MessageBox.Show("Selecciona un producto.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Primero busca o selecciona un producto.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -124,6 +125,80 @@ namespace SistemaInventario.Views
                 return;
             }
 
+            try
+            {
+                AgregarProductoAlDetalle(producto, cantidad);
+
+                TxtEscaneo.Clear();
+                TxtEscaneo.Focus();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void BtnBuscarEscaneo_Click(object sender, RoutedEventArgs e)
+        {
+            ProcesarEscaneo();
+        }
+
+        private void TxtEscaneo_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ProcesarEscaneo();
+            }
+        }
+
+        private void ProcesarEscaneo()
+        {
+            string valorEscaneado = TxtEscaneo.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(valorEscaneado))
+            {
+                TxtEscaneo.Focus();
+                return;
+            }
+
+            if (!int.TryParse(valorEscaneado, out int productoId))
+            {
+                MessageBox.Show("El QR o valor ingresado debe contener el ID numérico del producto.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                TxtEscaneo.SelectAll();
+                TxtEscaneo.Focus();
+                return;
+            }
+
+            var producto = _productoService.ObtenerPorId(productoId);
+
+            if (producto == null)
+            {
+                MessageBox.Show("No se encontró un producto con ese ID.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                TxtEscaneo.SelectAll();
+                TxtEscaneo.Focus();
+                return;
+            }
+
+            if (producto.Stock <= 0)
+            {
+                MessageBox.Show("El producto no tiene stock disponible.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                TxtEscaneo.SelectAll();
+                TxtEscaneo.Focus();
+                return;
+            }
+
+            CbProductos.SelectedItem = _productos.FirstOrDefault(p => p.Id == producto.Id);
+
+            TxtCantidad.Text = string.Empty;
+            TxtPrecioUnitario.Text = producto.PrecioVenta.ToString("N2");
+            TxtStockDisponible.Text = producto.Stock.ToString();
+            TxtSubtotal.Text = "0.00";
+
+            TxtCantidad.Focus();
+        }
+
+        private void AgregarProductoAlDetalle(Producto producto, int cantidad)
+        {
             int cantidadYaAgregada = _detalleVenta
                 .Where(d => d.ProductoId == producto.Id)
                 .Sum(d => d.Cantidad);
@@ -131,10 +206,7 @@ namespace SistemaInventario.Views
             int stockDisponibleReal = producto.Stock - cantidadYaAgregada;
 
             if (cantidad > stockDisponibleReal)
-            {
-                MessageBox.Show("No hay suficiente stock disponible.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+                throw new Exception("No hay suficiente stock disponible.");
 
             var detalleExistente = _detalleVenta.FirstOrDefault(d => d.ProductoId == producto.Id);
 
@@ -177,7 +249,8 @@ namespace SistemaInventario.Views
         {
             if (!_detalleVenta.Any())
             {
-                LimpiarFormularioProducto();
+                LimpiarFormularioProducto(true);
+                TxtEscaneo.Focus();
                 return;
             }
 
@@ -192,7 +265,8 @@ namespace SistemaInventario.Views
 
             _detalleVenta.Clear();
             ActualizarGrid();
-            LimpiarFormularioProducto();
+            LimpiarFormularioProducto(true);
+            TxtEscaneo.Focus();
         }
 
         private void BtnGuardarVenta_Click(object sender, RoutedEventArgs e)
@@ -220,7 +294,8 @@ namespace SistemaInventario.Views
                 _detalleVenta.Clear();
                 ActualizarGrid();
                 CargarProductos();
-                LimpiarFormularioProducto();
+                LimpiarFormularioProducto(true);
+                TxtEscaneo.Focus();
             }
             catch (Exception ex)
             {

@@ -117,6 +117,30 @@
                                                  Margin="0,0,0,14"
                                                  Padding="10,6"/>
 
+                                        <TextBlock Text="Código"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White"
+                                                   Margin="0,0,0,6"/>
+                                        <TextBox x:Name="TxtCodigo"
+                                                 Height="36"
+                                                 Margin="0,0,0,14"
+                                                 Padding="10,6"/>
+
+                                        <TextBlock Text="Código QR"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White"
+                                                   Margin="0,0,0,6"/>
+                                        <TextBox x:Name="TxtCodigoQr"
+                                                 Height="36"
+                                                 Margin="0,0,0,14"
+                                                 Padding="10,6"/>
+
+                                        <CheckBox x:Name="ChkUsaQr"
+                                                  Content="Usar QR para este producto"
+                                                  Margin="0,0,0,14"
+                                                  Foreground="White"
+                                                  IsChecked="True"/>
+
                                         <TextBlock Text="Precio compra"
                                                    FontWeight="SemiBold"
                                                    Foreground="White"
@@ -164,7 +188,7 @@
                                                    Foreground="White"
                                                    Margin="0,0,0,6"/>
                                         <TextBox x:Name="TxtDescripcion"
-                                                 Height="86"
+                                                 Height="120"
                                                  Margin="0,0,0,14"
                                                  Padding="10,8"
                                                  AcceptsReturn="True"
@@ -296,11 +320,14 @@
                           BorderThickness="0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="70"/>
-                        <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="200"/>
+                        <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="120"/>
+                        <DataGridTextColumn Header="Código QR" Binding="{Binding CodigoQr}" Width="140"/>
+                        <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="180"/>
                         <DataGridTextColumn Header="Categoría" Binding="{Binding Categoria.Nombre}" Width="150"/>
                         <DataGridTextColumn Header="Precio Compra" Binding="{Binding PrecioCompra}" Width="130"/>
                         <DataGridTextColumn Header="Precio Venta" Binding="{Binding PrecioVenta}" Width="130"/>
                         <DataGridTextColumn Header="Stock" Binding="{Binding Stock}" Width="90"/>
+                        <DataGridCheckBoxColumn Header="Usa QR" Binding="{Binding UsaQr}" Width="90"/>
                         <DataGridTextColumn Header="Descripción" Binding="{Binding Descripcion}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>

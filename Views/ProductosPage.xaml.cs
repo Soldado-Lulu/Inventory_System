@@ -1,21 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using SistemaInventario.Models;
 using SistemaInventario.Services;
-using System.Globalization;
-
 
 namespace SistemaInventario.Views
 {
@@ -58,6 +48,9 @@ namespace SistemaInventario.Views
         private void LimpiarFormulario()
         {
             TxtNombre.Text = string.Empty;
+            TxtCodigo.Text = string.Empty;
+            TxtCodigoQr.Text = string.Empty;
+            ChkUsaQr.IsChecked = true;
             TxtPrecioCompra.Text = string.Empty;
             TxtPrecioVenta.Text = string.Empty;
             TxtStock.Text = string.Empty;
@@ -72,7 +65,11 @@ namespace SistemaInventario.Views
             DgProductos.ItemsSource = _productos;
         }
 
-        private bool ValidarFormulario(out decimal precioCompra, out decimal precioVenta, out int stock, out string nombreCategoria)
+        private bool ValidarFormulario(
+            out decimal precioCompra,
+            out decimal precioVenta,
+            out int stock,
+            out string nombreCategoria)
         {
             precioCompra = 0;
             precioVenta = 0;
@@ -129,20 +126,30 @@ namespace SistemaInventario.Views
             if (!ValidarFormulario(out decimal precioCompra, out decimal precioVenta, out int stock, out string nombreCategoria))
                 return;
 
-            var producto = new Producto
+            try
             {
-                Nombre = TxtNombre.Text.Trim(),
-                PrecioCompra = precioCompra,
-                PrecioVenta = precioVenta,
-                Stock = stock,
-                Descripcion = TxtDescripcion.Text.Trim()
-            };
+                var producto = new Producto
+                {
+                    Nombre = TxtNombre.Text.Trim(),
+                    Codigo = TxtCodigo.Text.Trim(),
+                    CodigoQr = TxtCodigoQr.Text.Trim(),
+                    UsaQr = ChkUsaQr.IsChecked ?? true,
+                    PrecioCompra = precioCompra,
+                    PrecioVenta = precioVenta,
+                    Stock = stock,
+                    Descripcion = TxtDescripcion.Text.Trim()
+                };
 
-            _productoService.Crear(producto, nombreCategoria);
-            CargarProductos();
-            LimpiarFormulario();
+                _productoService.Crear(producto, nombreCategoria);
+                CargarProductos();
+                LimpiarFormulario();
 
-            MessageBox.Show("Producto guardado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Producto guardado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void BtnActualizar_Click(object sender, RoutedEventArgs e)
@@ -156,17 +163,27 @@ namespace SistemaInventario.Views
             if (!ValidarFormulario(out decimal precioCompra, out decimal precioVenta, out int stock, out string nombreCategoria))
                 return;
 
-            _productoSeleccionado.Nombre = TxtNombre.Text.Trim();
-            _productoSeleccionado.PrecioCompra = precioCompra;
-            _productoSeleccionado.PrecioVenta = precioVenta;
-            _productoSeleccionado.Stock = stock;
-            _productoSeleccionado.Descripcion = TxtDescripcion.Text.Trim();
+            try
+            {
+                _productoSeleccionado.Nombre = TxtNombre.Text.Trim();
+                _productoSeleccionado.Codigo = TxtCodigo.Text.Trim();
+                _productoSeleccionado.CodigoQr = TxtCodigoQr.Text.Trim();
+                _productoSeleccionado.UsaQr = ChkUsaQr.IsChecked ?? true;
+                _productoSeleccionado.PrecioCompra = precioCompra;
+                _productoSeleccionado.PrecioVenta = precioVenta;
+                _productoSeleccionado.Stock = stock;
+                _productoSeleccionado.Descripcion = TxtDescripcion.Text.Trim();
 
-            _productoService.Actualizar(_productoSeleccionado, nombreCategoria);
-            CargarProductos();
-            LimpiarFormulario();
+                _productoService.Actualizar(_productoSeleccionado, nombreCategoria);
+                CargarProductos();
+                LimpiarFormulario();
 
-            MessageBox.Show("Producto actualizado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Producto actualizado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void BtnEliminar_Click(object sender, RoutedEventArgs e)
@@ -206,8 +223,11 @@ namespace SistemaInventario.Views
             _productoSeleccionado = producto;
 
             TxtNombre.Text = producto.Nombre;
-            TxtPrecioCompra.Text = producto.PrecioCompra.ToString();
-            TxtPrecioVenta.Text = producto.PrecioVenta.ToString();
+            TxtCodigo.Text = producto.Codigo;
+            TxtCodigoQr.Text = producto.CodigoQr;
+            ChkUsaQr.IsChecked = producto.UsaQr;
+            TxtPrecioCompra.Text = producto.PrecioCompra.ToString("0.##");
+            TxtPrecioVenta.Text = producto.PrecioVenta.ToString("0.##");
             TxtStock.Text = producto.Stock.ToString();
             TxtDescripcion.Text = producto.Descripcion;
             CbCategoria.Text = producto.Categoria?.Nombre ?? string.Empty;
@@ -227,6 +247,8 @@ namespace SistemaInventario.Views
             var filtrados = _productos
                 .Where(p =>
                     p.Nombre.ToLower().Contains(texto) ||
+                    p.Codigo.ToLower().Contains(texto) ||
+                    p.CodigoQr.ToLower().Contains(texto) ||
                     (p.Categoria != null && p.Categoria.Nombre.ToLower().Contains(texto)))
                 .ToList();
 
